@@ -414,7 +414,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Validate delay time format
                 if (!delayTime.match(/^(\d+\s*(hours?|hrs?|h)(\s*\d+\s*(minutes?|mins?|m))?|\d+\s*(minutes?|mins?|m))$/i)) {
                     e.preventDefault();
-                    alert('Please enter a valid journey duration (e.g., "2 hours", "3h 30m", "45 minutes")');
+                    alert('Please enter a valid journey duration (e.g., "0 hours", "3h 30m", "45 minutes")');
                     delayTimeInput.focus();
                     return false;
                 }
@@ -437,7 +437,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }, 5000);
 
             // Set default delay time to "2 hours"
-            document.getElementById('delay_time').value = '2 hours';
+            document.getElementById('delay_time').value = '0 hours 5min';
         });
     </script>
 </body>

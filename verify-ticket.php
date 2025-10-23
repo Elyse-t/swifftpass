@@ -16,15 +16,15 @@ if ($ticket_id && $booking_id && $hash === $expected_hash) {
     $stmt->bind_param("si", $ticket_id, $booking_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
         $ticket = $result->fetch_assoc();
-        
+
         if ($ticket['checked'] === 'no') {
             // Update the database
             $update_stmt = $conn->prepare("UPDATE tickets SET checked = 'yes', checked_at = NOW() WHERE ticket_id = ? AND booking_id = ?");
             $update_stmt->bind_param("si", $ticket_id, $booking_id);
-            
+
             if ($update_stmt->execute()) {
                 $message = "✅ Ticket verified successfully!";
                 $status = "success";
@@ -50,6 +50,7 @@ if ($ticket_id && $booking_id && $hash === $expected_hash) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,6 +67,7 @@ if ($ticket_id && $booking_id && $hash === $expected_hash) {
             justify-content: center;
             padding: 20px;
         }
+
         .verification-container {
             background: white;
             border-radius: 20px;
@@ -75,27 +77,37 @@ if ($ticket_id && $booking_id && $hash === $expected_hash) {
             max-width: 500px;
             width: 100%;
         }
-        .success { color: #28a745; }
-        .error { color: #dc3545; }
-        .info { color: #17a2b8; }
+
+        .success {
+            color: #28a745;
+        }
+
+        .error {
+            color: #dc3545;
+        }
+
+        .info {
+            color: #17a2b8;
+        }
     </style>
 </head>
+
 <body>
     <div class="verification-container">
         <div class="mb-4">
             <i class="fas fa-<?php echo $status === 'success' ? 'check-circle' : ($status === 'error' ? 'exclamation-circle' : 'info-circle'); ?> fa-4x text-<?php echo $status; ?> mb-3"></i>
             <h2 class="text-<?php echo $status; ?>">Ticket Verification</h2>
         </div>
-        
+
         <p class="lead mb-4"><?php echo $message; ?></p>
-        
+
         <?php if ($status === 'success'): ?>
             <div class="alert alert-success">
                 <i class="fas fa-check me-2"></i>
                 This ticket has been successfully verified and marked as used.
             </div>
         <?php endif; ?>
-        
+
         <div class="mt-4">
             <a href="homepage.php" class="btn btn-primary">
                 <i class="fas fa-home me-2"></i>Back to Home
@@ -104,16 +116,14 @@ if ($ticket_id && $booking_id && $hash === $expected_hash) {
                 <i class="fas fa-times me-2"></i>Close Window
             </button>
         </div>
-        
+
         <?php if (isset($ticket_id) && !empty($ticket_id)): ?>
-            <div class="mt-4 text-muted small">
-                <p>Ticket ID: <?php echo $ticket_id; ?></p>
-                <p>Booking ID: <?php echo $booking_id; ?></p>
-                <p>Verified: <?php echo date('M j, Y g:i A'); ?></p>
-            </div>
-        <?php endif; ?>
+            <p>Verified: <?php echo date('M j, Y g:i A', strtotime('+2 hours')); ?></p>
     </div>
+<?php endif; ?>
+</div>
 </body>
+
 </html>
 
 <?php
