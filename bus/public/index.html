@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generate Bus Ticket QR</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🎟️ Bus Ticket QR Generator</h1>
+
+    <form id="qrForm">
+      <input type="text" id="user" placeholder="Enter your name" required />
+      <input type="number" id="tickets" placeholder="Number of tickets" min="1" required />
+      <button type="submit">Generate QR</button>
+    </form>
+
+    <div id="result"></div>
+
+    <a href="/scan.html" class="link">Go to Scan Page →</a>
+  </div>
+
+  <script>
+    document.getElementById("qrForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const user = document.getElementById("user").value;
+      const numberOfTickets = document.getElementById("tickets").value;
+
+      const res = await fetch("/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user, numberOfTickets }),
+      });
+
+      const data = await res.json();
+      if (data.qrImage) {
+        document.getElementById("result").innerHTML = `
+          <h3>QR for ${user}</h3>
+          <img src="${data.qrImage}" alt="QR Code" />
+          <p><b>Ticket ID:</b> ${data.id}</p>
+        `;
+      } else {
+        document.getElementById("result").innerHTML = `<p style="color:red;">Error: ${data.message}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>

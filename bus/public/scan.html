@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scan Ticket</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🧾 Scan Bus Ticket</h1>
+
+    <p>Enter Ticket ID to simulate scanning:</p>
+    <form id="scanForm">
+      <input type="text" id="ticketId" placeholder="Enter Ticket ID" required />
+      <button type="submit">Scan</button>
+    </form>
+
+    <div id="scanResult"></div>
+    <a href="/index.html" class="link">← Back to Generate</a>
+  </div>
+
+  <script>
+    document.getElementById("scanForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const id = document.getElementById("ticketId").value;
+      window.location.href = `/scan/${id}`;
+    });
+  </script>
+</body>
+</html>
