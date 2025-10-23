@@ -65,13 +65,13 @@ if (!empty($ticket_id) || !empty($booking_id)) {
         ");
         $stmt->bind_param("i", $booking_id);
     }
-    
+
     $stmt->execute();
     $result = $stmt->get_result();
-    
+
     if ($result->num_rows > 0) {
         $data = $result->fetch_assoc();
-        
+
         // Organize the data
         $ticket_details = [
             'ticket_id' => $data['ticket_id'],
@@ -79,31 +79,31 @@ if (!empty($ticket_id) || !empty($booking_id)) {
             'checked_at' => $data['checked_at'],
             'created_at' => $data['ticket_created']
         ];
-        
+
         $booking_details = [
             'booking_id' => $data['booking_id'],
             'number_of_seats' => $data['number_of_seats'],
             'booking_date' => $data['booking_date']
         ];
-        
+
         $passenger_details = [
             'name' => $data['firstname'] . ' ' . $data['lastname'],
             'phone' => $data['contact'],
             'email' => $data['email']
         ];
-        
+
         $payment_details = [
             'amount' => $data['amount'],
             'payment_method' => $data['payment_method'],
             'transaction_id' => $data['transaction_id'],
             'time_paid' => $data['time_paid']
         ];
-        
+
         $bus_details = [
             'model' => $data['model'],
             'plates_number' => $data['plates_number']
         ];
-        
+
         $trip_details = [
             'departure' => $data['departure'],
             'destination' => $data['destination'],
@@ -117,9 +117,10 @@ if (!empty($ticket_id) || !empty($booking_id)) {
 
 // If no data found, show error message
 if (empty($ticket_details) && empty($booking_details)) {
-    ?>
+?>
     <!DOCTYPE html>
     <html lang="en">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -135,6 +136,7 @@ if (empty($ticket_details) && empty($booking_details)) {
                 align-items: center;
                 justify-content: center;
             }
+
             .error-container {
                 text-align: center;
                 max-width: 500px;
@@ -142,6 +144,7 @@ if (empty($ticket_details) && empty($booking_details)) {
             }
         </style>
     </head>
+
     <body>
         <div class="error-container">
             <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
@@ -152,8 +155,9 @@ if (empty($ticket_details) && empty($booking_details)) {
             </a>
         </div>
     </body>
+
     </html>
-    <?php
+<?php
     exit;
 }
 
@@ -163,12 +167,12 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
     if (($ticket_details['checked'] ?? 'no') === 'no') {
         $update_stmt = $conn->prepare("UPDATE tickets SET checked = 'yes', checked_at = NOW() WHERE ticket_id = ?");
         $update_stmt->bind_param("s", $ticket_id);
-        
+
         if ($update_stmt->execute()) {
             // Update local ticket details
             $ticket_details['checked'] = 'yes';
             $ticket_details['checked_at'] = date('Y-m-d H:i:s');
-            
+
             // Log the scan event (optional)
             $log_stmt = $conn->prepare("INSERT INTO ticket_scans (ticket_id, scanned_at, scanner_info) VALUES (?, NOW(), ?)");
             $scanner_info = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
@@ -183,6 +187,7 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -461,18 +466,18 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
             .no-print {
                 display: none !important;
             }
-            
+
             .print-only {
                 display: block !important;
             }
-            
+
             body {
                 background: white !important;
                 padding: 0 !important;
                 margin: 0 !important;
                 display: block !important;
             }
-            
+
             .ticket-container {
                 box-shadow: none !important;
                 margin: 0 !important;
@@ -480,11 +485,11 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
                 border-radius: 0 !important;
                 border: none !important;
             }
-            
+
             .action-buttons {
                 display: none !important;
             }
-            
+
             .qr-code-wrapper {
                 box-shadow: none !important;
                 border: 1px solid #ddd !important;
@@ -496,33 +501,35 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
                 padding: 10px;
                 display: block;
             }
-            
+
             .ticket-container {
                 margin: 0;
             }
-            
+
             .ticket-header {
                 padding: 2rem 1rem;
             }
-            
+
             .ticket-body {
                 padding: 1.5rem;
             }
-            
+
             .ticket-info-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .action-buttons {
                 padding: 1rem;
                 flex-direction: column;
             }
-            
-            .btn-download, .btn-print, .btn-home {
+
+            .btn-download,
+            .btn-print,
+            .btn-home {
                 width: 100%;
                 justify-content: center;
             }
-            
+
             .qr-code-wrapper {
                 max-width: 180px;
             }
@@ -534,6 +541,7 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -546,9 +554,17 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
 
         /* Scan animation */
         @keyframes scanPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .scanning {
@@ -556,6 +572,7 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
         }
     </style>
 </head>
+
 <body>
     <div class="ticket-container">
         <!-- Ticket Header -->
@@ -585,7 +602,7 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
                     <i class="fas fa-user"></i>
                 </div>
                 <h4 class="text-primary mb-3">Passenger & Journey Details</h4>
-                
+
                 <div class="row">
                     <div class="col-md-8">
                         <div class="ticket-info-grid">
@@ -614,16 +631,16 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
                                 <span class="info-value"><?php echo htmlspecialchars($trip_details['departure'] ?? ''); ?> → <?php echo htmlspecialchars($trip_details['destination'] ?? ''); ?></span>
                             </div>
                             <?php if (!empty($trip_details['departure_datetime'])): ?>
-                            <div class="info-item">
-                                <span class="info-label">Departure Time:</span>
-                                <span class="info-value"><?php echo date('M j, Y g:i A', strtotime($trip_details['departure_datetime'])); ?></span>
-                            </div>
+                                <div class="info-item">
+                                    <span class="info-label">Departure Time:</span>
+                                    <span class="info-value"><?php echo date('M j, Y g:i A', strtotime($trip_details['departure_datetime'])); ?></span>
+                                </div>
                             <?php endif; ?>
                             <?php if (!empty($trip_details['estimated_arrival'])): ?>
-                            <div class="info-item">
-                                <span class="info-label">Arrival Time:</span>
-                                <span class="info-value"><?php echo date('M j, Y g:i A', strtotime($trip_details['estimated_arrival'])); ?></span>
-                            </div>
+                                <div class="info-item">
+                                    <span class="info-label">Arrival Time:</span>
+                                    <span class="info-value"><?php echo date('M j, Y g:i A', strtotime($trip_details['estimated_arrival'])); ?></span>
+                                </div>
                             <?php endif; ?>
                             <div class="info-item">
                                 <span class="info-label">Seats Booked:</span>
@@ -635,7 +652,7 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-4">
                         <!-- QR Code -->
                         <div class="qr-code-container">
@@ -653,12 +670,12 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
                                     Booking Ref: #<?php echo $booking_details['booking_id']; ?>
                                 </small>
                             </div>
-                            
+
                             <?php if (($ticket_details['checked'] ?? 'no') === 'yes' && !empty($ticket_details['checked_at'])): ?>
-                            <div class="scan-info mt-3">
-                                <i class="fas fa-check-circle text-success me-1"></i>
-                                <strong>Scanned:</strong> <?php echo date('M j, Y g:i A', strtotime($ticket_details['checked_at'])); ?>
-                            </div>
+                                <div class="scan-info mt-3">
+                                    <i class="fas fa-check-circle text-success me-1"></i>
+                                    <strong>Scanned:</strong> <?php echo date('M j, Y g:i A', strtotime($ticket_details['checked_at'])); ?>
+                                </div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -671,7 +688,7 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
                     <i class="fas fa-credit-card"></i>
                 </div>
                 <h4 class="text-primary mb-3">Payment Information</h4>
-                
+
                 <div class="ticket-info-grid">
                     <div class="info-item">
                         <span class="info-label">Total Amount Paid:</span>
@@ -697,7 +714,7 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
 
             <!-- Security Notice -->
             <div class="security-notice">
-                <strong>Security Notice:</strong> This QR code will automatically expire once scanned at the boarding point. 
+                <strong>Security Notice:</strong> This QR code will automatically expire once scanned at the boarding point.
                 Please keep this ticket secure until your journey. Do not share this ticket with anyone.
             </div>
 
@@ -727,243 +744,241 @@ if (isset($_GET['scan']) && $_GET['scan'] == 'true' && !empty($ticket_id)) {
         </div>
     </div>
 
-   <!-- QR Code Generator -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script>
-    // Generate QR code with actual data
-    function generateQRCode() {
-        const qr = qrcode(0, 'M');
-        const qrData = {
-            ticket_id: '<?php echo $ticket_details['ticket_id'] ?? ''; ?>',
-            booking_id: '<?php echo $booking_details['booking_id']; ?>',
-            action: 'verify_ticket',
-            passenger: '<?php echo htmlspecialchars($passenger_details['name']); ?>',
-            bus: '<?php echo htmlspecialchars($bus_details['model']); ?>',
-            route: '<?php echo htmlspecialchars($trip_details['departure'] ?? ''); ?> to <?php echo htmlspecialchars($trip_details['destination'] ?? ''); ?>',
-            timestamp: <?php echo time(); ?>,
-            security_hash: '<?php echo md5($ticket_details['ticket_id'] ?? '' . $booking_details['booking_id'] . 'swiftpass_secret'); ?>'
-        };
-        
-        qr.addData(JSON.stringify(qrData));
-        qr.make();
-        
-        const qrContainer = document.getElementById('qrCodeContainer');
-        qrContainer.innerHTML = qr.createImgTag(4); // Reduced size to 4 for better fit
-    }
+    <!-- QR Code Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // Generate QR code with actual data
+        function generateQRCode() {
+            const qr = qrcode(0, 'M');
 
-    // Print function
-    function printTicket() {
-        window.print();
-    }
+            const ticket_id = '<?php echo $ticket_details['ticket_id'] ?? ''; ?>';
+            const booking_id = '<?php echo $booking_details['booking_id']; ?>';
+            const security_hash = '<?php echo md5(($ticket_details['ticket_id'] ?? '') . $booking_details['booking_id'] . 'swiftpass_secret'); ?>';
 
-    // Download as image function
-    function downloadTicket() {
-        const ticketElement = document.querySelector('.ticket-container');
-        const downloadBtn = document.querySelector('.btn-download');
-        
-        // Show loading state
-        const originalText = downloadBtn.innerHTML;
-        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
-        downloadBtn.disabled = true;
-        
-        html2canvas(ticketElement, {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            backgroundColor: '#ffffff'
-        }).then(canvas => {
-            const image = canvas.toDataURL('image/png');
-            const link = document.createElement('a');
-            link.download = 'swiftpass-ticket-<?php echo $ticket_details['ticket_id'] ?? $booking_details['booking_id']; ?>.png';
-            link.href = image;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Restore button state
-            downloadBtn.innerHTML = originalText;
-            downloadBtn.disabled = false;
-        }).catch(error => {
-            console.error('Error generating ticket image:', error);
-            downloadBtn.innerHTML = originalText;
-            downloadBtn.disabled = false;
-            alert('Error downloading ticket. Please try again.');
-        });
-    }
+            // Create a secure verification URL - FIXED the URL
+            const verificationUrl = `<?php echo 'https://swifftpass.cleverapps.io/'; ?>verify-ticket.php?ticket_id=${ticket_id}&booking_id=${booking_id}&hash=${security_hash}`;
 
-    // Scan ticket function - UPDATED TO USE EXPRESS SERVER
-    function scanTicket() {
-        <?php if (!empty($ticket_details['ticket_id'])): ?>
-        // Show confirmation dialog
-        if (confirm('Are you sure you want to scan this ticket? This will mark it as used and cannot be undone.')) {
+            qr.addData(verificationUrl);
+            qr.make();
+
+            const qrContainer = document.getElementById('qrCodeContainer');
+            qrContainer.innerHTML = qr.createImgTag(4);
+        }
+
+        // Print function
+        function printTicket() {
+            window.print();
+        }
+
+        // Download as image function
+        function downloadTicket() {
+            const ticketElement = document.querySelector('.ticket-container');
+            const downloadBtn = document.querySelector('.btn-download');
+
             // Show loading state
-            const qrWrapper = document.querySelector('.qr-code-wrapper');
-            const qrImage = document.querySelector('#qrCodeContainer img');
-            
-            if (qrWrapper) qrWrapper.classList.add('scanning');
-            if (qrImage) qrImage.style.opacity = '0.7';
-            
-            // Send scan request to Express backend
-            fetch('http://localhost:3000/ticket/scan', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    ticket_id: '<?php echo $ticket_details['ticket_id']; ?>'
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    // Update UI to show ticket is used
-                    const statusBadge = document.querySelector('.status-badge');
-                    if (statusBadge) {
-                        statusBadge.className = 'status-badge bg-warning text-white';
-                        statusBadge.textContent = '🟡 USED';
-                    }
-                    
-                    // Add scan info
-                    const qrContainer = document.querySelector('.qr-code-container');
-                    const existingScanInfo = qrContainer.querySelector('.scan-info');
-                    
-                    if (!existingScanInfo) {
-                        const scanInfo = document.createElement('div');
-                        scanInfo.className = 'scan-info mt-3';
-                        scanInfo.innerHTML = '<i class="fas fa-check-circle text-success me-1"></i><strong>Scanned:</strong> Just now';
-                        qrContainer.appendChild(scanInfo);
-                    }
-                    
-                    // Update QR code appearance to show it's used
-                    if (qrImage) {
-                        qrImage.style.filter = 'grayscale(100%)';
-                    }
-                    
-                    alert('✅ Ticket scanned successfully!');
-                    
-                    // Stop checking status since it's now used
-                    if (typeof statusCheckInterval !== 'undefined') {
-                        clearInterval(statusCheckInterval);
-                    }
-                } else {
-                    alert('❌ ' + (data.message || 'Failed to scan ticket'));
-                }
-            })
-            .catch(error => {
-                console.error('Error scanning ticket:', error);
-                alert('❌ Error scanning ticket. Please make sure the server is running on port 3000.');
-            })
-            .finally(() => {
-                if (qrWrapper) qrWrapper.classList.remove('scanning');
-                if (qrImage) qrImage.style.opacity = '1';
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+            downloadBtn.disabled = true;
+
+            html2canvas(ticketElement, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                const image = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = 'swiftpass-ticket-<?php echo $ticket_details['ticket_id'] ?? $booking_details['booking_id']; ?>.png';
+                link.href = image;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Restore button state
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+            }).catch(error => {
+                console.error('Error generating ticket image:', error);
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+                alert('Error downloading ticket. Please try again.');
             });
         }
-        <?php else: ?>
-        alert('Ticket ID not found. Cannot scan.');
-        <?php endif; ?>
-    }
 
-    // Check ticket status periodically (if ticket exists and is active) - UPDATED TO USE EXPRESS SERVER
-    function checkTicketStatus() {
-        <?php if (!empty($ticket_details['ticket_id']) && ($ticket_details['checked'] ?? 'no') === 'no'): ?>
-        fetch('http://localhost:3000/ticket/<?php echo $ticket_details['ticket_id']; ?>')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success && data.ticket.checked === 'yes') {
-                    // Update status display
-                    const statusBadge = document.querySelector('.status-badge');
-                    if (statusBadge) {
-                        statusBadge.className = 'status-badge bg-warning text-white';
-                        statusBadge.textContent = '🟡 USED';
-                    }
-                    
-                    // Add scan info
-                    const qrContainer = document.querySelector('.qr-code-container');
-                    const existingScanInfo = qrContainer.querySelector('.scan-info');
+        // Scan ticket function - UPDATED TO USE EXPRESS SERVER
+        function scanTicket() {
+            <?php if (!empty($ticket_details['ticket_id'])): ?>
+                // Show confirmation dialog
+                if (confirm('Are you sure you want to scan this ticket? This will mark it as used and cannot be undone.')) {
+                    // Show loading state
+                    const qrWrapper = document.querySelector('.qr-code-wrapper');
                     const qrImage = document.querySelector('#qrCodeContainer img');
-                    
-                    if (!existingScanInfo) {
-                        const scanInfo = document.createElement('div');
-                        scanInfo.className = 'scan-info mt-3';
-                        scanInfo.innerHTML = '<i class="fas fa-check-circle text-success me-1"></i><strong>Scanned:</strong> ' + new Date().toLocaleString();
-                        qrContainer.appendChild(scanInfo);
-                    }
-                    
-                    // Update QR code appearance
-                    if (qrImage) {
-                        qrImage.style.filter = 'grayscale(100%)';
-                    }
-                    
-                    // Stop checking status
-                    if (typeof statusCheckInterval !== 'undefined') {
-                        clearInterval(statusCheckInterval);
-                    }
+
+                    if (qrWrapper) qrWrapper.classList.add('scanning');
+                    if (qrImage) qrImage.style.opacity = '0.7';
+
+                    // Send scan request to Express backend
+                    fetch('http://localhost:3000/ticket/scan', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                ticket_id: '<?php echo $ticket_details['ticket_id']; ?>'
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                // Update UI to show ticket is used
+                                const statusBadge = document.querySelector('.status-badge');
+                                if (statusBadge) {
+                                    statusBadge.className = 'status-badge bg-warning text-white';
+                                    statusBadge.textContent = '🟡 USED';
+                                }
+
+                                // Add scan info
+                                const qrContainer = document.querySelector('.qr-code-container');
+                                const existingScanInfo = qrContainer.querySelector('.scan-info');
+
+                                if (!existingScanInfo) {
+                                    const scanInfo = document.createElement('div');
+                                    scanInfo.className = 'scan-info mt-3';
+                                    scanInfo.innerHTML = '<i class="fas fa-check-circle text-success me-1"></i><strong>Scanned:</strong> Just now';
+                                    qrContainer.appendChild(scanInfo);
+                                }
+
+                                // Update QR code appearance to show it's used
+                                if (qrImage) {
+                                    qrImage.style.filter = 'grayscale(100%)';
+                                }
+
+                                alert('✅ Ticket scanned successfully!');
+
+                                // Stop checking status since it's now used
+                                if (typeof statusCheckInterval !== 'undefined') {
+                                    clearInterval(statusCheckInterval);
+                                }
+                            } else {
+                                alert('❌ ' + (data.message || 'Failed to scan ticket'));
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error scanning ticket:', error);
+                            alert('❌ Error scanning ticket. Please make sure the server is running on port 3000.');
+                        })
+                        .finally(() => {
+                            if (qrWrapper) qrWrapper.classList.remove('scanning');
+                            if (qrImage) qrImage.style.opacity = '1';
+                        });
                 }
-            })
-            .catch(error => {
-                console.error('Error checking ticket status:', error);
-                // Don't show alert for status check errors to avoid annoying users
-            });
-        <?php endif; ?>
-    }
+            <?php else: ?>
+                alert('Ticket ID not found. Cannot scan.');
+            <?php endif; ?>
+        }
 
-    // Add some interactive effects
-    document.addEventListener('DOMContentLoaded', function() {
-        // Generate QR code
-        generateQRCode();
-        
-        const buttons = document.querySelectorAll('.btn-download, .btn-print, .btn-home');
-        buttons.forEach(button => {
-            button.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-2px)';
+        // Check ticket status periodically (if ticket exists and is active) - UPDATED TO USE EXPRESS SERVER
+        function checkTicketStatus() {
+            <?php if (!empty($ticket_details['ticket_id']) && ($ticket_details['checked'] ?? 'no') === 'no'): ?>
+                fetch('http://localhost:3000/ticket/<?php echo $ticket_details['ticket_id']; ?>')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success && data.ticket.checked === 'yes') {
+                            // Update status display
+                            const statusBadge = document.querySelector('.status-badge');
+                            if (statusBadge) {
+                                statusBadge.className = 'status-badge bg-warning text-white';
+                                statusBadge.textContent = '🟡 USED';
+                            }
+
+                            // Add scan info
+                            const qrContainer = document.querySelector('.qr-code-container');
+                            const existingScanInfo = qrContainer.querySelector('.scan-info');
+                            const qrImage = document.querySelector('#qrCodeContainer img');
+
+                            if (!existingScanInfo) {
+                                const scanInfo = document.createElement('div');
+                                scanInfo.className = 'scan-info mt-3';
+                                scanInfo.innerHTML = '<i class="fas fa-check-circle text-success me-1"></i><strong>Scanned:</strong> ' + new Date().toLocaleString();
+                                qrContainer.appendChild(scanInfo);
+                            }
+
+                            // Update QR code appearance
+                            if (qrImage) {
+                                qrImage.style.filter = 'grayscale(100%)';
+                            }
+
+                            // Stop checking status
+                            if (typeof statusCheckInterval !== 'undefined') {
+                                clearInterval(statusCheckInterval);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking ticket status:', error);
+                        // Don't show alert for status check errors to avoid annoying users
+                    });
+            <?php endif; ?>
+        }
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Generate QR code
+            generateQRCode();
+
+            const buttons = document.querySelectorAll('.btn-download, .btn-print, .btn-home');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                });
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
             });
-            button.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-            });
-        });
-        
-        // Add click event to QR code for scanning - UPDATED
-        const qrContainer = document.getElementById('qrCodeContainer');
-        if (qrContainer) {
-            qrContainer.style.cursor = 'pointer';
-            qrContainer.title = 'Click to scan ticket (mark as used)';
-            qrContainer.addEventListener('click', scanTicket);
-            
-            // Also make the QR code image clickable if it's loaded later
-            const qrImage = qrContainer.querySelector('img');
-            if (qrImage) {
-                qrImage.style.cursor = 'pointer';
-                qrImage.title = 'Click to scan ticket (mark as used)';
+
+            // Add click event to QR code for scanning - UPDATED
+            const qrContainer = document.getElementById('qrCodeContainer');
+            if (qrContainer) {
+                qrContainer.style.cursor = 'pointer';
+                qrContainer.title = 'Click to scan ticket (mark as used)';
+                qrContainer.addEventListener('click', scanTicket);
+
+                // Also make the QR code image clickable if it's loaded later
+                const qrImage = qrContainer.querySelector('img');
+                if (qrImage) {
+                    qrImage.style.cursor = 'pointer';
+                    qrImage.title = 'Click to scan ticket (mark as used)';
+                }
             }
-        }
-        
-        // If ticket is already used, update the appearance
-        <?php if (($ticket_details['checked'] ?? 'no') === 'yes'): ?>
-        const qrImage = document.querySelector('#qrCodeContainer img');
-        if (qrImage) {
-            qrImage.style.filter = 'grayscale(100%)';
-            qrImage.style.opacity = '0.7';
-        }
-        <?php endif; ?>
-    });
 
-    // Check status every 5 seconds (only if ticket is active)
-    <?php if (($ticket_details['checked'] ?? 'no') === 'no' && !empty($ticket_details['ticket_id'])): ?>
-    const statusCheckInterval = setInterval(checkTicketStatus, 5000);
-    <?php endif; ?>
-</script>
+            // If ticket is already used, update the appearance
+            <?php if (($ticket_details['checked'] ?? 'no') === 'yes'): ?>
+                const qrImage = document.querySelector('#qrCodeContainer img');
+                if (qrImage) {
+                    qrImage.style.filter = 'grayscale(100%)';
+                    qrImage.style.opacity = '0.7';
+                }
+            <?php endif; ?>
+        });
+
+        // Check status every 5 seconds (only if ticket is active)
+        <?php if (($ticket_details['checked'] ?? 'no') === 'no' && !empty($ticket_details['ticket_id'])): ?>
+            const statusCheckInterval = setInterval(checkTicketStatus, 5000);
+        <?php endif; ?>
+    </script>
 </body>
+
 </html>
 <?php
 $conn->close();
